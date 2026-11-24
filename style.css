@@ -27,6 +27,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; } /* mobil nesmie písmo sám zväčšovať */
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 var(--body); }
 
 .app { display: grid; grid-template-columns: 340px 1fr; min-height: 100vh; }
@@ -200,7 +201,7 @@ body:not(.viac-deti) .only-viac, body:not(.podpis-vlastny) .only-vlastny { displ
 .pismo-skolske { --cd: var(--body); --cb: var(--body); }
 .card .title, .card .num, .back-num, .ln { font-family: var(--cd); }
 .card .text, .card .extra, .card .riddle { font-family: var(--cb); }
-.pismo-rucne .card .text { font-weight: 400; font-size: calc(12pt * var(--k)); line-height: 1.2; }
+.pismo-rucne .card .text, .pismo-rucne .card .riddle { font-weight: 400; font-size: calc(12pt * var(--k)); line-height: 1.2; }
 .pismo-rucne .card .title { font-weight: 400; font-size: calc(16pt * var(--k)); }
 .pismo-skolske .card .title { font-weight: 800; }
 .card.tlacene .title, .card.tlacene .text, .card.tlacene .extra, .card.tlacene .riddle { text-transform: uppercase; letter-spacing: .03em; }
@@ -212,10 +213,10 @@ body:not(.viac-deti) .only-viac, body:not(.podpis-vlastny) .only-vlastny { displ
 .stars { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(1.2mm * var(--s)) calc(2.4mm * var(--s)); padding: 0 calc(3mm * var(--s)); }
 .stars .grp { display: inline-flex; gap: calc(.3mm * var(--s)); }
 .stars svg { width: calc(4.2mm * var(--s)); height: calc(4.2mm * var(--s)); }
-.riddle { font: 600 calc(8.5pt * var(--k))/1.25 var(--body); color: #333; text-align: center; margin: 0 calc(4mm * var(--s));
+.riddle { font: 600 calc(11.5pt * var(--k))/1.3 var(--body); color: #333; text-align: center; margin: 0 calc(4mm * var(--s));
   padding: calc(1.2mm * var(--s)) calc(2mm * var(--s)); border: .3mm dashed var(--c); border-radius: 2mm; }
 .riddle b { color: var(--c); }
-.riddle .answer { display: block; transform: rotate(180deg); font-size: .85em; color: #888; margin-top: .6mm; }
+.riddle .answer { display: block; transform: rotate(180deg); font-size: .7em; color: #888; margin-top: .6mm; }
 .challenge { font-weight: 600; color: #333; }
 .challenge b { color: var(--c); }
 .done { position: absolute; right: calc(2mm * var(--s)); bottom: 0; width: calc(13mm * var(--s)); height: calc(13mm * var(--s)); border-radius: 50%;
