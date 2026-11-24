@@ -27,7 +27,9 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; } /* mobil nesmie písmo sám zväčšovať */
+/* mobilné prehliadače nesmú písmo samy zväčšovať (Chrome, Safari, Firefox, Samsung) */
+html { -webkit-text-size-adjust: 100%; -moz-text-size-adjust: none; text-size-adjust: 100%; }
+.sheets, .sheets * { -webkit-text-size-adjust: none; -moz-text-size-adjust: none; text-size-adjust: none; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 var(--body); }
 
 .app { display: grid; grid-template-columns: 340px 1fr; min-height: 100vh; }
