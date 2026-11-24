@@ -552,7 +552,10 @@ function init() {
 
   f.addEventListener('change', generuj);
   // prepínač jazyka je v hlavičke mimo formulára, zmena k formuláru nedobublá
-  document.querySelectorAll('input[name=jazyk]').forEach(el => el.addEventListener('change', generuj));
+  document.querySelectorAll('input[name=jazyk]').forEach(el => {
+    el.addEventListener('change', generuj);
+    el.addEventListener('click', () => { if (el.value !== JAZYK) generuj(); });
+  });
   f.addEventListener('input', e => { if (e.target.matches('input[type=text], input[type=number], textarea') && e.target.id !== 'kodVstup') generuj(); });
   $('#pridajDieta').addEventListener('click', () => {
     const deti = citajDeti();
