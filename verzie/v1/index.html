@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adventné kartičky</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="panel">
+    <header class="brand">
+      <h1>Adventné kartičky</h1>
+      <p>Nastav, pre koho sú, a vytlač si ich.</p>
+    </header>
+
+    <form id="form" autocomplete="off">
+      <fieldset>
+        <legend>Dieťa</legend>
+        <label for="meno">Meno</label>
+        <input id="meno" name="meno" type="text" placeholder="napr. Emka">
+        <div class="row2 even">
+          <div><label for="vek">Vek</label>
+            <select id="vek" name="vek">
+              <option value="m">3 – 5 rokov</option>
+              <option value="s" selected>6 – 8 rokov</option>
+              <option value="v">9 – 12 rokov</option>
+            </select></div>
+          <div><label for="pohlavie">Oslovenie</label>
+            <select id="pohlavie" name="pohlavie">
+              <option value="f">dievča</option>
+              <option value="m">chlapec</option>
+              <option value="n" selected>neuvádzať</option>
+            </select></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Kalendár</legend>
+        <div class="row2">
+          <div><label for="zaciatok">Začiatok</label><input id="zaciatok" name="zaciatok" type="date"></div>
+          <div><label for="pocet">Okienok</label><input id="pocet" name="pocet" type="number" min="1" max="40" value="24"></div>
+        </div>
+        <label class="check"><input type="checkbox" id="poklad" name="poklad" checked> Posledné okienko: hľadanie pokladu</label>
+        <p class="note">Sviatky (Mikuláš, Lucia…) a adventné nedele sa dajú na správny deň samy. Výlety a dlhé aktivity padnú na víkend.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Tlačiareň</legend>
+        <div class="seg">
+          <input type="radio" name="tlac" id="tlac-farba" value="farba" checked><label for="tlac-farba">Farebná</label>
+          <input type="radio" name="tlac" id="tlac-cb" value="cb"><label for="tlac-cb">Čiernobiela</label>
+        </div>
+        <div class="seg only-farba">
+          <input type="radio" name="farby" id="farby-plne" value="plne" checked><label for="farby-plne">Plné farby</label>
+          <input type="radio" name="farby" id="farby-setrne" value="setrne"><label for="farby-setrne">Šetriť atrament</label>
+        </div>
+        <p class="note only-cb">Obrázky budú omaľovánky – deti si ich vyfarbia samy.</p>
+        <div class="row2 even">
+          <div><label for="naStranu">Kartičiek na A4</label>
+            <select id="naStranu" name="naStranu">
+              <option value="4">4 (veľké)</option>
+              <option value="6" selected>6 (ako vzor)</option>
+              <option value="8">8 (menšie)</option>
+              <option value="12">12 (mini)</option>
+            </select></div>
+          <div><label for="strihanie">Strihanie</label>
+            <select id="strihanie" name="strihanie">
+              <option value="ciara" selected>čiara</option>
+              <option value="rohy">rožky</option>
+              <option value="nic">nič</option>
+            </select></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Druhy úloh</legend>
+        <div id="kategorie" class="chips"></div>
+      </fieldset>
+    </form>
+
+    <div class="actions">
+      <button type="button" id="zamiesat" class="btn">Zamiešať úlohy</button>
+      <button type="button" id="tlacit" class="btn primary">Tlačiť</button>
+    </div>
+  </aside>
+
+  <main class="preview">
+    <div id="info" class="info"></div>
+    <div id="sheets" class="sheets"></div>
+  </main>
+</div>
+<script src="data.js"></script>
+<script src="art.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

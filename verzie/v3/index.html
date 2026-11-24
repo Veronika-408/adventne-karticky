@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adventné kartičky</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Patrick+Hand&family=Nunito:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="panel">
+    <header class="brand">
+      <h1>Adventné kartičky</h1>
+      <p>Nastav, pre koho sú, a vytlač si ich.</p>
+    </header>
+
+    <form id="form" autocomplete="off">
+      <details open>
+        <summary>Deti</summary>
+        <div class="sec">
+          <div id="deti" class="deti"></div>
+          <button type="button" id="pridajDieta" class="btn small">+ Pridať súrodenca</button>
+          <label class="check only-viac"><input type="checkbox" id="spolocne" name="spolocne"> Rovnaké úlohy pre všetky deti</label>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Kalendár</summary>
+        <div class="sec">
+          <div class="row2">
+            <div><label for="zaciatok">Začiatok</label><input id="zaciatok" name="zaciatok" type="date"></div>
+            <div><label for="pocet">Okienok</label><input id="pocet" name="pocet" type="number" min="1" max="40" value="24"></div>
+          </div>
+          <label for="maxMin">Úlohy v pracovný deň najviac na</label>
+          <select id="maxMin" name="maxMin">
+            <option value="15">15 minút</option>
+            <option value="30" selected>30 minút</option>
+            <option value="45">45 minút</option>
+          </select>
+          <label class="check"><input type="checkbox" id="poklad" name="poklad" checked> Posledné okienko: hľadanie pokladu</label>
+          <p class="note">Sviatky (Mikuláš, Lucia…) a adventné nedele sa dajú na správny deň samy. Výlety a dlhé aktivity padnú na víkend.</p>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Obsah</summary>
+        <div class="sec">
+          <span class="label">Druhy úloh</span>
+          <div id="kategorie" class="chips"></div>
+          <span class="label">U nás doma</span>
+          <label class="check"><input type="checkbox" id="bezNab" name="bezNab"> bez náboženských tradícií</label>
+          <label class="check"><input type="checkbox" id="bezVon" name="bezVon"> bez úloh vonku</label>
+          <label class="check"><input type="checkbox" id="bezPenazi" name="bezPenazi"> bez úloh, ktoré stoja peniaze</label>
+          <label for="vlastne">Vlastné úlohy <span class="muted">(každá na nový riadok)</span></label>
+          <textarea id="vlastne" name="vlastne" rows="4" placeholder="6.12. Návšteva u babky&#10;Kino | Ideme spolu do kina na rozprávku"></textarea>
+          <label for="podpis">Podpis na kartičkách</label>
+          <select id="podpis" name="podpis">
+            <option value="">bez podpisu</option>
+            <option>Tvoj Ježiško</option>
+            <option>Tvoj anjelik</option>
+            <option>Tvoj škriatok</option>
+            <option>Mama a ocko</option>
+            <option value="*">vlastný…</option>
+          </select>
+          <input type="text" id="podpisVlastny" name="podpisVlastny" class="only-vlastny" placeholder="napr. Babka Anka">
+        </div>
+      </details>
+
+      <details open>
+        <summary>Podľa veku</summary>
+        <div class="sec">
+          <label class="check"><input type="checkbox" id="pocitanie" name="pocitanie" checked> 3–5: hviezdičky na spočítanie</label>
+          <label class="check"><input type="checkbox" id="tlacene" name="tlacene"> 6–8: VEĽKÉ TLAČENÉ PÍSMENÁ</label>
+          <label class="check"><input type="checkbox" id="hadanky" name="hadanky" checked> 6–12: hádanka na každej 3. kartičke</label>
+          <label class="check"><input type="checkbox" id="vyzvy" name="vyzvy" checked> 9–12: výzva navyše cez víkend</label>
+          <label class="check"><input type="checkbox" id="splnene" name="splnene"> krúžok „splnené“ na nálepku</label>
+          <label for="pismo">Písmo na kartičkách</label>
+          <select id="pismo" name="pismo">
+            <option value="zaoblene">zaoblené</option>
+            <option value="rucne">ručne písané</option>
+            <option value="skolske">školské, dobre čitateľné</option>
+          </select>
+        </div>
+      </details>
+
+      <details open>
+        <summary>Tlač</summary>
+        <div class="sec">
+          <span class="label">Tlačiareň</span>
+          <div class="seg">
+            <input type="radio" name="tlac" id="tlac-farba" value="farba" checked><label for="tlac-farba">Farebná</label>
+            <input type="radio" name="tlac" id="tlac-cb" value="cb"><label for="tlac-cb">Čiernobiela</label>
+          </div>
+          <div class="seg only-farba">
+            <input type="radio" name="farby" id="farby-plne" value="plne" checked><label for="farby-plne">Plné farby</label>
+            <input type="radio" name="farby" id="farby-setrne" value="setrne"><label for="farby-setrne">Šetriť atrament</label>
+          </div>
+          <label for="tema" class="only-farba">Farebné ladenie</label>
+          <select id="tema" name="tema" class="only-farba">
+            <option value="pestre">pestré (podľa druhu úlohy)</option>
+            <option value="klasika">červeno-zelené</option>
+            <option value="zima">zimné modré</option>
+            <option value="zlato">zlaté a hnedé</option>
+          </select>
+          <p class="note only-cb">Obrázky budú omaľovánky – deti si ich vyfarbia samy.</p>
+          <div class="row2 even">
+            <div><label for="naStranu">Kartičiek na A4</label>
+              <select id="naStranu" name="naStranu">
+                <option value="4">4 (veľké)</option>
+                <option value="6" selected>6 (ako vzor)</option>
+                <option value="8">8 (menšie)</option>
+                <option value="12">12 (mini)</option>
+              </select></div>
+            <div><label for="strihanie">Strihanie</label>
+              <select id="strihanie" name="strihanie">
+                <option value="ciara" selected>čiara</option>
+                <option value="rohy">rožky</option>
+                <option value="nic">nič</option>
+              </select></div>
+          </div>
+          <label class="check"><input type="checkbox" id="cas" name="cas"> ukázať na kartičke, koľko úloha trvá</label>
+          <label class="check"><input type="checkbox" id="zadne" name="zadne"> zadné strany s číslom (obojstranná tlač)</label>
+          <label class="check"><input type="checkbox" id="prehlad" name="prehlad" checked> strana pre rodiča: prehľad a nákupný zoznam</label>
+          <label class="check"><input type="checkbox" id="stitky" name="stitky"> štítky s číslami na vrecúška</label>
+        </div>
+      </details>
+
+      <details>
+        <summary>Kód sady</summary>
+        <div class="sec">
+          <p class="note">Rovnaký kód a rovnaké nastavenia = rovnaké kartičky. Hodí sa, keď chceš niektorú dotlačiť.</p>
+          <div class="row2">
+            <div><input type="text" id="kodVstup" placeholder="napr. 1A2B3C" aria-label="Kód sady"></div>
+            <div><button type="button" id="nacitajKod" class="btn small">Použiť</button></div>
+          </div>
+        </div>
+      </details>
+    </form>
+
+    <div class="actions">
+      <button type="button" id="zamiesat" class="btn">Zamiešať úlohy</button>
+      <button type="button" id="tlacit" class="btn primary">Tlačiť</button>
+    </div>
+  </aside>
+
+  <main class="preview">
+    <div id="info" class="info"></div>
+    <div id="stats" class="stats"></div>
+    <div id="sheets" class="sheets"></div>
+  </main>
+</div>
+<dialog id="lupa" class="lupa" aria-label="Zväčšená kartička">
+  <div id="lupaObsah" class="lupa-obsah"></div>
+  <button type="button" class="btn small" id="lupaZavri">Zavrieť</button>
+</dialog>
+<script src="data.js"></script>
+<script src="art.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
