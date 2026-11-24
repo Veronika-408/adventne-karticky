@@ -315,3 +315,8 @@ body:not(.viac-deti) .only-viac, body:not(.podpis-vlastny) .only-vlastny { displ
   .oznam { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* prepínač jazyka */
+.brand-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.seg.lang { flex: none; border-radius: 8px; }
+.seg.lang label { padding: 4px 9px; font-size: 12.5px; letter-spacing: .04em; }

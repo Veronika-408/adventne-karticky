@@ -13,152 +13,158 @@
 <div class="app">
   <aside class="panel">
     <header class="brand">
-      <h1>Adventné kartičky</h1>
-      <p>Nastav, pre koho sú, a vytlač si ich.</p>
+      <div class="brand-row">
+        <h1 data-i18n="title">Adventné kartičky</h1>
+        <div class="seg lang" role="radiogroup" aria-label="Jazyk" data-i18n-aria="jazyk">
+          <input type="radio" form="form" name="jazyk" id="jazyk-sk" value="sk" checked><label for="jazyk-sk" title="Slovenčina">SK</label>
+          <input type="radio" form="form" name="jazyk" id="jazyk-en" value="en"><label for="jazyk-en" title="English">EN</label>
+        </div>
+      </div>
+      <p data-i18n="sub">Nastav, pre koho sú, a vytlač si ich.</p>
     </header>
 
     <form id="form" autocomplete="off">
       <details open>
-        <summary>Deti</summary>
+        <summary data-i18n="deti">Deti</summary>
         <div class="sec">
           <div id="deti" class="deti"></div>
-          <button type="button" id="pridajDieta" class="btn small">+ Pridať súrodenca</button>
-          <label class="check only-viac"><input type="checkbox" id="spolocne" name="spolocne"> Rovnaké úlohy pre všetky deti</label>
+          <button type="button" id="pridajDieta" class="btn small" data-i18n="pridaj">+ Pridať súrodenca</button>
+          <label class="check only-viac"><input type="checkbox" id="spolocne" name="spolocne"> <span data-i18n="spolocne">Rovnaké úlohy pre všetky deti</span></label>
         </div>
       </details>
 
       <details open>
-        <summary>Kalendár</summary>
+        <summary data-i18n="kalendar">Kalendár</summary>
         <div class="sec">
           <div class="row2">
-            <div><label for="zaciatok">Začiatok</label><input id="zaciatok" name="zaciatok" type="date"></div>
-            <div><label for="pocet">Okienok</label><input id="pocet" name="pocet" type="number" min="1" max="40" value="24"></div>
+            <div><label for="zaciatok" data-i18n="zaciatok">Začiatok</label><input id="zaciatok" name="zaciatok" type="date"></div>
+            <div><label for="pocet" data-i18n="okienok">Okienok</label><input id="pocet" name="pocet" type="number" min="1" max="40" value="24"></div>
           </div>
-          <label for="maxMin">Úlohy v pracovný deň najviac na</label>
+          <label for="maxMin" data-i18n="maxMin">Úlohy v pracovný deň najviac na</label>
           <select id="maxMin" name="maxMin">
-            <option value="15">15 minút</option>
-            <option value="30" selected>30 minút</option>
-            <option value="45">45 minút</option>
+            <option value="15" data-i18n="min15">15 minút</option>
+            <option value="30" selected data-i18n="min30">30 minút</option>
+            <option value="45" data-i18n="min45">45 minút</option>
           </select>
-          <label class="check"><input type="checkbox" id="poklad" name="poklad" checked> Posledné okienko: hľadanie pokladu</label>
-          <label class="check"><input type="checkbox" id="odpocet" name="odpocet" checked> odpočítavanie „do Vianoc ešte 12 dní“</label>
-          <p class="note">Sviatky (Mikuláš, Lucia…) a adventné nedele sa dajú na správny deň samy. Výlety a dlhé aktivity padnú na víkend.</p>
+          <label class="check"><input type="checkbox" id="poklad" name="poklad" checked> <span data-i18n="poklad">Posledné okienko: hľadanie pokladu</span></label>
+          <label class="check"><input type="checkbox" id="odpocet" name="odpocet" checked> <span data-i18n="odpocet">odpočítavanie „do Vianoc ešte 12 dní“</span></label>
+          <p class="note" data-i18n="noteKal">Sviatky (Mikuláš, Lucia…) a adventné nedele sa dajú na správny deň samy. Výlety a dlhé aktivity padnú na víkend.</p>
         </div>
       </details>
 
       <details open>
-        <summary>Obsah</summary>
+        <summary data-i18n="obsah">Obsah</summary>
         <div class="sec">
-          <span class="label">Druhy úloh</span>
+          <span class="label" data-i18n="druhy">Druhy úloh</span>
           <div id="kategorie" class="chips"></div>
-          <span class="label">U nás doma</span>
-          <label class="check"><input type="checkbox" id="bezNab" name="bezNab"> bez náboženských tradícií</label>
-          <label class="check"><input type="checkbox" id="bezVon" name="bezVon"> bez úloh vonku</label>
-          <label class="check"><input type="checkbox" id="bezPenazi" name="bezPenazi"> bez úloh, ktoré stoja peniaze</label>
-          <label for="vlastne">Vlastné úlohy <span class="muted">(každá na nový riadok)</span></label>
-          <textarea id="vlastne" name="vlastne" rows="4" placeholder="6.12. Návšteva u babky&#10;Kino | Ideme spolu do kina na rozprávku"></textarea>
-          <label for="podpis">Podpis na kartičkách</label>
+          <span class="label" data-i18n="doma">U nás doma</span>
+          <label class="check"><input type="checkbox" id="bezNab" name="bezNab"> <span data-i18n="bezNab">bez náboženských tradícií</span></label>
+          <label class="check"><input type="checkbox" id="bezVon" name="bezVon"> <span data-i18n="bezVon">bez úloh vonku</span></label>
+          <label class="check"><input type="checkbox" id="bezPenazi" name="bezPenazi"> <span data-i18n="bezPenazi">bez úloh, ktoré stoja peniaze</span></label>
+          <label for="vlastne" data-i18n="vlastne">Vlastné úlohy <span class="muted">(každá na nový riadok)</span></label>
+          <textarea id="vlastne" name="vlastne" rows="4" data-i18n-ph="vlastne" placeholder="6.12. Návšteva u babky&#10;Kino | Ideme spolu do kina na rozprávku"></textarea>
+          <label for="podpis" data-i18n="podpis">Podpis na kartičkách</label>
           <select id="podpis" name="podpis">
-            <option value="">bez podpisu</option>
-            <option>Tvoj Ježiško</option>
-            <option>Tvoj anjelik</option>
-            <option>Tvoj škriatok</option>
-            <option>Mama a ocko</option>
-            <option value="*">vlastný…</option>
+            <option value="" data-i18n="podpis0">bez podpisu</option>
+            <option value="jezisko" data-i18n="podpisJ">Tvoj Ježiško</option>
+            <option value="anjel" data-i18n="podpisA">Tvoj anjelik</option>
+            <option value="skriatok" data-i18n="podpisS">Tvoj škriatok</option>
+            <option value="rodicia" data-i18n="podpisR">Mama a ocko</option>
+            <option value="*" data-i18n="podpisV">vlastný…</option>
           </select>
-          <input type="text" id="podpisVlastny" name="podpisVlastny" class="only-vlastny" placeholder="napr. Babka Anka">
+          <input type="text" id="podpisVlastny" name="podpisVlastny" class="only-vlastny" data-i18n-ph="podpis" placeholder="napr. Babka Anka">
         </div>
       </details>
 
       <details open>
-        <summary>Podľa veku</summary>
+        <summary data-i18n="vek">Podľa veku</summary>
         <div class="sec">
-          <label class="check"><input type="checkbox" id="pocitanie" name="pocitanie" checked> 3–5: hviezdičky na spočítanie</label>
-          <label class="check"><input type="checkbox" id="tlacene" name="tlacene"> 6–8: VEĽKÉ TLAČENÉ PÍSMENÁ</label>
-          <label class="check"><input type="checkbox" id="hadanky" name="hadanky" checked> 6–12: hádanka na každej 3. kartičke</label>
-          <label class="check"><input type="checkbox" id="vyzvy" name="vyzvy" checked> 9–12: výzva navyše cez víkend</label>
-          <label class="check"><input type="checkbox" id="splnene" name="splnene"> krúžok „splnené“ na nálepku</label>
-          <label for="pismo">Písmo na kartičkách</label>
+          <label class="check"><input type="checkbox" id="pocitanie" name="pocitanie" checked> <span data-i18n="pocitanie">3–5: hviezdičky na spočítanie</span></label>
+          <label class="check"><input type="checkbox" id="tlacene" name="tlacene"> <span data-i18n="tlacene">6–8: VEĽKÉ TLAČENÉ PÍSMENÁ</span></label>
+          <label class="check"><input type="checkbox" id="hadanky" name="hadanky" checked> <span data-i18n="hadanky">6–12: hádanka na každej 3. kartičke</span></label>
+          <label class="check"><input type="checkbox" id="vyzvy" name="vyzvy" checked> <span data-i18n="vyzvy">9–12: výzva navyše cez víkend</span></label>
+          <label class="check"><input type="checkbox" id="splnene" name="splnene"> <span data-i18n="splnene">krúžok „splnené“ na nálepku</span></label>
+          <label for="pismo" data-i18n="pismo">Písmo na kartičkách</label>
           <select id="pismo" name="pismo">
-            <option value="zaoblene">zaoblené</option>
-            <option value="rucne">ručne písané</option>
-            <option value="skolske">školské, dobre čitateľné</option>
+            <option value="zaoblene" data-i18n="pismoZ">zaoblené</option>
+            <option value="rucne" data-i18n="pismoR">ručne písané</option>
+            <option value="skolske" data-i18n="pismoS">školské, dobre čitateľné</option>
           </select>
         </div>
       </details>
 
       <details open>
-        <summary>Tlač</summary>
+        <summary data-i18n="tlac">Tlač</summary>
         <div class="sec">
-          <span class="label">Tlačiareň</span>
+          <span class="label" data-i18n="tlaciaren">Tlačiareň</span>
           <div class="seg">
-            <input type="radio" name="tlac" id="tlac-farba" value="farba" checked><label for="tlac-farba">Farebná</label>
-            <input type="radio" name="tlac" id="tlac-cb" value="cb"><label for="tlac-cb">Čiernobiela</label>
+            <input type="radio" name="tlac" id="tlac-farba" value="farba" checked><label for="tlac-farba" data-i18n="farebna">Farebná</label>
+            <input type="radio" name="tlac" id="tlac-cb" value="cb"><label for="tlac-cb" data-i18n="cb">Čiernobiela</label>
           </div>
           <div class="seg only-farba">
-            <input type="radio" name="farby" id="farby-plne" value="plne" checked><label for="farby-plne">Plné farby</label>
-            <input type="radio" name="farby" id="farby-setrne" value="setrne"><label for="farby-setrne">Šetriť atrament</label>
+            <input type="radio" name="farby" id="farby-plne" value="plne" checked><label for="farby-plne" data-i18n="plne">Plné farby</label>
+            <input type="radio" name="farby" id="farby-setrne" value="setrne"><label for="farby-setrne" data-i18n="setrne">Šetriť atrament</label>
           </div>
-          <label for="tema" class="only-farba">Farebné ladenie</label>
+          <label for="tema" class="only-farba" data-i18n="tema">Farebné ladenie</label>
           <select id="tema" name="tema" class="only-farba">
-            <option value="pestre">pestré (podľa druhu úlohy)</option>
-            <option value="klasika">červeno-zelené</option>
-            <option value="zima">zimné modré</option>
-            <option value="zlato">zlaté a hnedé</option>
+            <option value="pestre" data-i18n="temaP">pestré (podľa druhu úlohy)</option>
+            <option value="klasika" data-i18n="temaK">červeno-zelené</option>
+            <option value="zima" data-i18n="temaZ">zimné modré</option>
+            <option value="zlato" data-i18n="temaG">zlaté a hnedé</option>
           </select>
-          <p class="note only-cb">Obrázky budú omaľovánky – deti si ich vyfarbia samy.</p>
+          <p class="note only-cb" data-i18n="noteCb">Obrázky budú omaľovánky – deti si ich vyfarbia samy.</p>
           <div class="row2 even">
-            <div><label for="naStranu">Kartičiek na A4</label>
+            <div><label for="naStranu" data-i18n="naStranu">Kartičiek na A4</label>
               <select id="naStranu" name="naStranu">
-                <option value="4">4 (veľké)</option>
-                <option value="6" selected>6 (ako vzor)</option>
-                <option value="8">8 (menšie)</option>
-                <option value="12">12 (mini)</option>
+                <option value="4" data-i18n="ns4">4 (veľké)</option>
+                <option value="6" selected data-i18n="ns6">6 (ako vzor)</option>
+                <option value="8" data-i18n="ns8">8 (menšie)</option>
+                <option value="12" data-i18n="ns12">12 (mini)</option>
               </select></div>
-            <div><label for="strihanie">Strihanie</label>
+            <div><label for="strihanie" data-i18n="strihanie">Strihanie</label>
               <select id="strihanie" name="strihanie">
-                <option value="ciara" selected>čiara</option>
-                <option value="rohy">rožky</option>
-                <option value="nic">nič</option>
+                <option value="ciara" selected data-i18n="cutC">čiara</option>
+                <option value="rohy" data-i18n="cutR">rožky</option>
+                <option value="nic" data-i18n="cutN">nič</option>
               </select></div>
           </div>
-          <label class="check"><input type="checkbox" id="cas" name="cas"> ukázať na kartičke, koľko úloha trvá</label>
-          <label class="check"><input type="checkbox" id="zadne" name="zadne"> zadné strany s číslom (obojstranná tlač)</label>
-          <label class="check"><input type="checkbox" id="prehlad" name="prehlad" checked> strana pre rodiča: prehľad a nákupný zoznam</label>
-          <label class="check"><input type="checkbox" id="stitky" name="stitky"> štítky s číslami na vrecúška</label>
-          <label class="check"><input type="checkbox" id="titulka" name="titulka"> titulná strana s menom</label>
-          <label for="vyber">Dotlačiť len kartičky č. <span class="muted">(prázdne = všetky)</span></label>
-          <input type="text" id="vyber" name="vyber" placeholder="napr. 3, 7-9" inputmode="numeric">
-          <button type="button" id="tlacTest" class="btn small">Vytlačiť skúšobnú stranu</button>
+          <label class="check"><input type="checkbox" id="cas" name="cas"> <span data-i18n="cas">ukázať na kartičke, koľko úloha trvá</span></label>
+          <label class="check"><input type="checkbox" id="zadne" name="zadne"> <span data-i18n="zadne">zadné strany s číslom (obojstranná tlač)</span></label>
+          <label class="check"><input type="checkbox" id="prehlad" name="prehlad" checked> <span data-i18n="prehlad">strana pre rodiča: prehľad a nákupný zoznam</span></label>
+          <label class="check"><input type="checkbox" id="stitky" name="stitky"> <span data-i18n="stitky">štítky s číslami na vrecúška</span></label>
+          <label class="check"><input type="checkbox" id="titulka" name="titulka"> <span data-i18n="titulka">titulná strana s menom</span></label>
+          <label for="vyber" data-i18n="vyber">Dotlačiť len kartičky č. <span class="muted">(prázdne = všetky)</span></label>
+          <input type="text" id="vyber" name="vyber" data-i18n-ph="vyber" placeholder="napr. 3, 7-9" inputmode="numeric">
+          <button type="button" id="tlacTest" class="btn small" data-i18n="tlacTest">Vytlačiť skúšobnú stranu</button>
         </div>
       </details>
 
       <details>
-        <summary>Ako vytlačiť</summary>
+        <summary data-i18n="tipyH">Ako vytlačiť</summary>
         <div class="sec"><ul id="tipy" class="tips"></ul></div>
       </details>
 
       <details>
-        <summary>Záloha a kód sady</summary>
+        <summary data-i18n="zaloha">Záloha a kód sady</summary>
         <div class="sec">
-          <p class="note">Záloha uloží všetko vrátane tvojich úprav do súboru. Na inom počítači ju len načítaš.</p>
+          <p class="note" data-i18n="zalohaNote">Záloha uloží všetko vrátane tvojich úprav do súboru. Na inom počítači ju len načítaš.</p>
           <div class="row2 even">
-            <div><button type="button" id="export" class="btn small">Uložiť zálohu</button></div>
-            <div><button type="button" id="import" class="btn small">Načítať zálohu</button></div>
+            <div><button type="button" id="export" class="btn small" data-i18n="export">Uložiť zálohu</button></div>
+            <div><button type="button" id="import" class="btn small" data-i18n="import">Načítať zálohu</button></div>
           </div>
           <input type="file" id="importSubor" accept=".json,application/json" hidden>
-          <p class="note">Rovnaký kód a rovnaké nastavenia = rovnaké kartičky (bez ručných úprav).</p>
+          <p class="note" data-i18n="kodNote">Rovnaký kód a rovnaké nastavenia = rovnaké kartičky (bez ručných úprav).</p>
           <div class="row2">
-            <div><input type="text" id="kodVstup" placeholder="napr. 1A2B3C" aria-label="Kód sady"></div>
-            <div><button type="button" id="nacitajKod" class="btn small">Použiť</button></div>
+            <div><input type="text" id="kodVstup" data-i18n-ph="kod" placeholder="napr. 1A2B3C" data-i18n-aria="kod" aria-label="Kód sady"></div>
+            <div><button type="button" id="nacitajKod" class="btn small" data-i18n="pouzit">Použiť</button></div>
           </div>
         </div>
       </details>
     </form>
 
     <div class="actions">
-      <button type="button" id="zamiesat" class="btn">Zamiešať úlohy</button>
-      <button type="button" id="tlacit" class="btn primary">Tlačiť</button>
+      <button type="button" id="zamiesat" class="btn" data-i18n="zamiesat">Zamiešať úlohy</button>
+      <button type="button" id="tlacit" class="btn primary" data-i18n="tlacit">Tlačiť</button>
     </div>
   </aside>
 
@@ -170,11 +176,13 @@
 </div>
 <div id="testSheet" class="test-wrap"></div>
 <div id="oznam" class="oznam" role="status" hidden></div>
-<dialog id="lupa" class="lupa" aria-label="Zväčšená kartička">
+<dialog id="lupa" class="lupa" aria-label="Zväčšená kartička" data-i18n-aria="lupa">
   <div id="lupaObsah" class="lupa-obsah"></div>
-  <button type="button" class="btn small" id="lupaZavri">Zavrieť</button>
+  <button type="button" class="btn small" id="lupaZavri" data-i18n="zavriet">Zavrieť</button>
 </dialog>
 <script src="data.js"></script>
+<script src="data-en.js"></script>
+<script src="i18n.js"></script>
 <script src="art.js"></script>
 <script src="app.js"></script>
 </body>

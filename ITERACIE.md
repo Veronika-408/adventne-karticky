@@ -62,3 +62,5 @@ vyblednutá farebná verzia, nedá sa nič upraviť ani zapamätať.
 - VEĽKÉ TLAČENÉ PÍSMENÁ platia aj pre hádanky, výzvy a doplnkové riadky.
 - Meno dieťaťa už nie je v pätičke kartičky (ostáva na titulke, štítkoch a v prehľade).
 - Text úlohy je v strede kartičky a je väčší; obrázok je menší pod ním a zmenší sa, keď text potrebuje viac miesta.
+- Prepínač jazyka SK / EN: celé ovládanie, kartičky, hádanky, výzvy, strana pre rodiča, rady k tlači
+  aj skúšobná strana. Rovnaký kód sady dá v oboch jazykoch rovnaké úlohy.

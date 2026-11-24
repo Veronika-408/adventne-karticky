@@ -1,16 +1,13 @@
-/* Generátor adventných kartičiek – v2 */
+/* Generátor adventných kartičiek (texty v i18n.js, data.js, data-en.js) */
 const $ = s => document.querySelector(s);
-const DNI = ['nedeľa', 'pondelok', 'utorok', 'streda', 'štvrtok', 'piatok', 'sobota'];
 const ROZLOZENIE = { 4: [2, 2], 6: [2, 3], 8: [2, 4], 12: [3, 4] };
 const KLUC = 'adventne-karticky';
-const VEKY = { m: '3 – 5 rokov', s: '6 – 8 rokov', v: '9 – 12 rokov' };
-const OSLOVENIE = { f: 'dievča', m: 'chlapec', n: 'neuvádzať' };
 const TEMY = {
   klasika: ['#b8323a', '#2f6b3a'],
   zima: ['#2f6fa8', '#4b86b8', '#1f4f7a'],
   zlato: ['#a8741a', '#8a5a2b', '#b5862a'],
 };
-const VLASTNA = { nazov: 'Moja úloha', ikona: 'srdce', farba: '#b8323a' };
+const VLASTNA = { ikona: 'srdce', farba: '#b8323a' };
 
 let stav = { seed: novySeed(), vymeny: {}, upravy: {}, zamky: {} };
 let sady = [];   // [{ dieta, k, dni }]
@@ -34,8 +31,9 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 const pad = n => String(n).padStart(2, '0');
 const mmdd = d => `${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const jeVikend = d => d.getDay() === 0 || d.getDay() === 6;
-const kratkyDatum = d => `${d.getDate()}. ${d.getMonth() + 1}.`;
+const kratkyDatum = d => T().datum(d);
 const kat = u => (u.c === 'vlastne' ? VLASTNA : KATEGORIE[u.c]);
+const nazovKat = c => c === 'vlastne' ? T().mojaUloha : JAZYK === 'en' ? (KATEGORIE_EN[c] || c) : (KATEGORIE[c] ? KATEGORIE[c].nazov : c);
 
 function tvar(text, pohlavie) {
   return text.replace(/\{([^|}]*)\|([^}]*)\}/g, (_, m, f) => {
@@ -47,9 +45,8 @@ function tvar(text, pohlavie) {
 const pohyblive = u => u && !u.d && (typeof u.id === 'number' || String(u.id).startsWith('v'));
 function doVianoc(d) {
   const dni = Math.round((new Date(d.getFullYear(), 11, 24, 12) - d) / 864e5);
-  if (dni === 0) return 'dnes je Štedrý deň!';
   if (dni < 0 || dni > 40) return '';
-  return dni === 1 ? 'zajtra sú Vianoce!' : `do Vianoc ešte ${dni} ${dni < 5 ? 'dni' : 'dní'}`;
+  return T().doVianoc(dni);
 }
 /* „1-6, 9“ → Set čísel, prázdne = všetko */
 function parsujVyber(text) {
@@ -75,11 +72,12 @@ function adventneNedele(rok) {
 /* ---------- deti ---------- */
 function riadokDietata(d, k) {
   const opt = (obj, v) => Object.entries(obj).map(([a, b]) => `<option value="${a}"${a === v ? ' selected' : ''}>${b}</option>`).join('');
+  const t = T();
   return `<div class="dieta" data-k="${k}">
-    <input type="text" id="meno-${k}" data-p="meno" placeholder="Meno, napr. Emka" value="${esc(d.meno || '')}" aria-label="Meno">
-    <select id="vek-${k}" data-p="vek" aria-label="Vek">${opt(VEKY, d.vek || 's')}</select>
-    <select id="pohlavie-${k}" data-p="pohlavie" aria-label="Oslovenie">${opt(OSLOVENIE, d.pohlavie || 'n')}</select>
-    ${k > 0 ? `<button type="button" class="x" data-odober="${k}" aria-label="Odstrániť dieťa">×</button>` : ''}
+    <input type="text" id="meno-${k}" data-p="meno" placeholder="${esc(t.menoPh)}" value="${esc(d.meno || '')}" aria-label="${esc(t.menoAria)}">
+    <select id="vek-${k}" data-p="vek" aria-label="${esc(t.vekAria)}">${opt(t.veky, d.vek || 's')}</select>
+    <select id="pohlavie-${k}" data-p="pohlavie" aria-label="${esc(t.oslAria)}">${opt(t.oslovenie, d.pohlavie || 'n')}</select>
+    ${k > 0 ? `<button type="button" class="x" data-odober="${k}" aria-label="${esc(t.odober)}">×</button>` : ''}
   </div>`;
 }
 function vykresliDeti(deti) {
@@ -117,6 +115,7 @@ function vyplnFormular(data) {
     else if (el.type === 'radio') el.checked = data[el.name] === el.value;
     else el.value = data[el.name];
   }
+  if (data.podpis && STARE_PODPISY[data.podpis]) f.podpis.value = STARE_PODPISY[data.podpis];
   // staršie uložené nastavenia mali jedno dieťa priamo vo formulári
   const deti = data.deti || [{ meno: data.meno || '', vek: data.vek || 's', pohlavie: data.pohlavie || 'n' }];
   vykresliDeti(deti);
@@ -136,7 +135,8 @@ function nastavenia() {
     kategorie: d.kat,
     bezNab: d.bezNab, bezVon: d.bezVon, bezPenazi: d.bezPenazi,
     vlastne: d.vlastne || '',
-    podpis: d.podpis === '*' ? (d.podpisVlastny || '').trim() : d.podpis,
+    jazyk: d.jazyk === 'en' ? 'en' : 'sk',
+    podpis: d.podpis === '*' ? (d.podpisVlastny || '').trim() : (STR[d.jazyk === 'en' ? 'en' : 'sk'].podpisy[d.podpis] || ''),
     podpisVlastny: d.podpis === '*',
     tlac: d.tlac, farby: d.farby, tema: d.tema,
     naStranu: +d.naStranu, strihanie: d.strihanie,
@@ -150,18 +150,18 @@ function nastavenia() {
 /* „6.12. Nadpis | text“ → úloha */
 function vlastneUlohy(text) {
   return text.split('\n').map(s => s.trim()).filter(Boolean).map((riadok, j) => {
-    const u = { c: 'vlastne', a: 'msv', i: 'srdce', id: 'v' + j, t: 'Moja úloha' };
+    const u = { c: 'vlastne', a: 'msv', i: 'srdce', id: 'v' + j, t: T().mojaUloha, bezNadpisu: true };
     const m = riadok.match(/^(\d{1,2})\.\s*(\d{1,2})\.?\s+(.*)$/);
     if (m) { u.d = `${pad(m[2])}-${pad(m[1])}`; riadok = m[3]; }
     const [a, b] = riadok.split('|').map(s => s.trim());
-    if (b) { u.t = a; u.x = b; } else u.x = a;
+    if (b) { u.t = a; u.x = b; u.bezNadpisu = false; } else u.x = a;
     return u;
   });
 }
 
 /* ---------- priradenie úloh ku dňom ---------- */
 function vhodneUlohy(n, veky) {
-  return ULOHY.map((u, id) => ({ ...u, id }))
+  return ULOHY.map((u, id) => ({ ...u, ...(JAZYK === 'en' ? ULOHY_EN[id] : {}), id }))
     .filter(u => veky.every(v => u.a.includes(v)) && n.kategorie.includes(u.c))
     .filter(u => !(n.bezNab && u.r) && !(n.bezVon && u.o) && !(n.bezPenazi && u.k));
 }
@@ -186,10 +186,12 @@ function priradenie(n, veky, seed, klucSady) {
     const advent = adventneNedele(datum.getFullYear())[mmdd(datum)];
     if (pevna) { den.uloha = pevna; pouzite.add(pevna.id); }
     if (advent && tradicie) {
-      if (den.uloha) den.navyse = `Večer zapáľte ${advent}. sviečku na adventnom venci.`;
-      else den.uloha = { ...SPECIALNE.nedela, id: 'nedela', t: SPECIALNE.nedela.t.replace('{n}', advent), x: SPECIALNE.nedela.x.replace('{n}', advent) };
+      const en = JAZYK === 'en';
+      const ned = en ? { ...SPECIALNE.nedela, ...SPECIALNE_EN.nedela } : SPECIALNE.nedela;
+      if (den.uloha) den.navyse = T().adventNavyse(advent);
+      else den.uloha = { ...ned, id: 'nedela', t: ned.t.replace('{n}', T().poradie(advent)), x: ned.x.replace('{n}', en ? PORADIE_EN[advent] : advent) };
     }
-    if (!den.uloha && i === n.pocet - 1 && n.poklad) den.uloha = { ...SPECIALNE.posledna, id: 'posledna' };
+    if (!den.uloha && i === n.pocet - 1 && n.poklad) den.uloha = { ...SPECIALNE.posledna, ...(JAZYK === 'en' ? SPECIALNE_EN.posledna : {}), id: 'posledna' };
     dni.push(den);
   }
 
@@ -213,8 +215,9 @@ function priradenie(n, veky, seed, klucSady) {
 
   // hádanky a výzvy navyše
   const veky0 = veky.join('');
-  const hadanky = zamiesaj(HADANKY.filter(h => veky.every(v => h.a.includes(v))), r);
-  const vyzvy = zamiesaj(VYZVY, r);
+  const en = JAZYK === 'en';
+  const hadanky = zamiesaj(HADANKY.map((h, j) => en ? { ...h, ...HADANKY_EN[j] } : h).filter(h => veky.every(v => h.a.includes(v))), r);
+  const vyzvy = zamiesaj(en ? VYZVY_EN : VYZVY, r);
   let h = 0, v = 0;
   for (const den of dni) {
     if (n.hadanky && !veky0.includes('m') && den.cislo % 3 === 0 && hadanky.length) den.hadanka = hadanky[h++ % hadanky.length];
@@ -274,44 +277,45 @@ function karta(den, sada, n) {
   const d = den.datum;
   const kluc = `${k}:${den.i}`;
   const uprava = stav.upravy[kluc] || {};
-  const povNadpis = u ? tvar(u.t, dieta.pohlavie) : 'Vyber aspoň jeden druh úloh';
+  const t = T();
+  const povNadpis = u ? tvar(u.t, dieta.pohlavie) : t.ziadnaUloha;
   const povText = u ? tvar(textUlohy(u, dieta.vek), dieta.pohlavie) : '';
   const nadpis = uprava.t ?? povNadpis;
   const text = uprava.x ?? povText;
   const cb = n.tlac === 'cb';
   const znacky = [];
-  if (n.cas && u && u.n) znacky.push(`<span class="badge time">${HODINY}${u.n >= 60 ? (u.n / 60).toString().replace('.', ',') + ' h' : u.n + ' min'}</span>`);
-  if (u && u.e && dieta.vek !== 'm') znacky.push('<span class="badge">s dospelým</span>');
+  if (n.cas && u && u.n) znacky.push(`<span class="badge time">${HODINY}${t.cas(u.n)}</span>`);
+  if (u && u.e && dieta.vek !== 'm') znacky.push(`<span class="badge">${t.sDospelym}</span>`);
   const pata = [n.podpis && `<span class="sign">${esc(n.podpis)}</span>`].filter(Boolean);
   let hviezdy = '';
   if (n.pocitanie && dieta.vek === 'm') {
     const skupiny = [];
     for (let j = 0; j < den.cislo; j += 5) skupiny.push(`<span class="grp">${HVIEZDICKA.repeat(Math.min(5, den.cislo - j))}</span>`);
-    hviezdy = `<div class="stars" title="Spočítaj hviezdičky">${skupiny.join('')}</div>`;
+    hviezdy = `<div class="stars" title="${t.spocitaj}">${skupiny.join('')}</div>`;
   }
   const navyse = [
     den.navyse && `<div class="extra">${esc(den.navyse)}</div>`,
-    den.hadanka && `<div class="riddle"><b>Hádanka:</b> ${esc(den.hadanka.q)}<span class="answer">${esc(den.hadanka.o)}</span></div>`,
-    den.vyzva && `<div class="extra challenge"><b>Výzva navyše:</b> ${esc(den.vyzva)}</div>`,
+    den.hadanka && `<div class="riddle"><b>${t.hadanka}</b> ${esc(den.hadanka.q)}<span class="answer">${esc(den.hadanka.o)}</span></div>`,
+    den.vyzva && `<div class="extra challenge"><b>${t.vyzva}</b> ${esc(den.vyzva)}</div>`,
   ].filter(Boolean).join('');
   const triedy = ['card', `vek-${dieta.vek}`, n.tlacene && dieta.vek !== 'v' ? 'tlacene' : ''].filter(Boolean).join(' ');
   return `<article class="${triedy}" style="--c:${farbaKarty(u, den, n)}" data-k="${k}" data-i="${den.i}">
     <div class="frame"></div>
     <div class="card-top"><span class="num">${den.cislo}</span>
-      <span class="date">${kratkyDatum(d)}<small>${DNI[d.getDay()]}</small>${n.odpocet ? `<small class="cd">${doVianoc(d)}</small>` : ''}</span>
+      <span class="date">${kratkyDatum(d)}<small>${t.dni[d.getDay()]}</small>${n.odpocet ? `<small class="cd">${doVianoc(d)}</small>` : ''}</span>
       ${znacky.length ? `<span class="badges">${znacky.join('')}</span>` : ''}</div>
     <div class="body">
       <div class="title" contenteditable="true" spellcheck="false" data-f="t" data-o="${esc(povNadpis)}">${esc(nadpis)}</div>
       <div class="text" contenteditable="true" spellcheck="false" data-f="x" data-o="${esc(povText)}">${esc(text)}</div>
       ${hviezdy}${navyse}
     </div>
-    <div class="art">${u ? kresba(u.i || kat(u).ikona, n.tlac) : ''}${cb && u ? '<span class="color-me">vymaľuj ma</span>' : ''}${n.splnene ? '<span class="done">splnené</span>' : ''}</div>
+    <div class="art">${u ? kresba(u.i || kat(u).ikona, n.tlac) : ''}${cb && u ? `<span class="color-me">${t.vymalujMa}</span>` : ''}${n.splnene ? `<span class="done">${t.splnene}</span>` : ''}</div>
     ${pata.length ? `<div class="foot one">${pata.join('')}</div>` : ''}
     <div class="tools">
-      ${pohyblive(u) ? `<button type="button" class="drag" draggable="true" data-tahaj="${k}:${den.i}" title="Potiahni na inú kartičku a vymenia si dni" aria-label="Presunúť">⇄</button>` : ''}
-      <button type="button" data-zamok="${k}:${den.i}" class="${stav.zamky[`${k}:${den.i}`] ? 'on' : ''}" title="Zamknutá kartička sa pri zamiešaní nezmení" aria-pressed="${!!stav.zamky[`${k}:${den.i}`]}">${stav.zamky[`${k}:${den.i}`] ? 'Zamknutá' : 'Zamknúť'}</button>
-      <button type="button" data-lupa title="Zobraziť kartičku vo veľkom">Lupa</button>
-      <button type="button" data-vymen="${k}:${den.i}" title="Vybrať inú úlohu na tento deň">Iná úloha</button></div>
+      ${pohyblive(u) ? `<button type="button" class="drag" draggable="true" data-tahaj="${k}:${den.i}" title="${t.presunTitle}" aria-label="${t.presun}">⇄</button>` : ''}
+      <button type="button" data-zamok="${k}:${den.i}" class="${stav.zamky[`${k}:${den.i}`] ? 'on' : ''}" title="${t.zamokTitle}" aria-pressed="${!!stav.zamky[`${k}:${den.i}`]}">${stav.zamky[`${k}:${den.i}`] ? t.zamknuta : t.zamknut}</button>
+      <button type="button" data-lupa title="${t.lupaTitle}">${t.lupa}</button>
+      <button type="button" data-vymen="${k}:${den.i}" title="${t.inaTitle}">${t.ina}</button></div>
     ${stav.zamky[`${k}:${den.i}`] ? '<span class="lock-mark" aria-hidden="true"></span>' : ''}
   </article>`;
 }
@@ -331,6 +335,7 @@ function zadnaKarta(den, n, i) {
 
 function stranaPreRodica(sada, n) {
   const { dieta, dni } = sada;
+  const t = T();
   const material = new Map();
   for (const d of dni) {
     const p = d.uloha && d.uloha.p;
@@ -340,18 +345,18 @@ function stranaPreRodica(sada, n) {
   const riadky = dni.map(d => {
     const u = d.uloha;
     const upr = stav.upravy[`${sada.k}:${d.i}`] || {};
-    const nadpis = upr.t ?? (u ? tvar(u.c === 'vlastne' && u.t === 'Moja úloha' ? u.x : u.t, dieta.pohlavie) : '');
-    const pozn = [u && u.e ? 's dospelým' : '', u && u.p ? 'pripraviť: ' + u.p : '', d.navyse].filter(Boolean).join(' · ');
-    return `<tr class="${jeVikend(d.datum) ? 'we' : ''}"><td class="c">${d.cislo}</td><td>${kratkyDatum(d.datum)} ${DNI[d.datum.getDay()].slice(0, 2)}</td>
+    const nadpis = upr.t ?? (u ? tvar(u.bezNadpisu ? u.x : u.t, dieta.pohlavie) : '');
+    const pozn = [u && u.e ? t.sDospelym : '', u && u.p ? t.pripravit + u.p : '', d.navyse].filter(Boolean).join(' · ');
+    return `<tr class="${jeVikend(d.datum) ? 'we' : ''}"><td class="c">${d.cislo}</td><td>${kratkyDatum(d.datum)} ${t.dni[d.datum.getDay()].slice(0, JAZYK === 'en' ? 3 : 2)}</td>
       <td><b>${esc(nadpis)}</b>${pozn ? `<small>${esc(pozn)}</small>` : ''}</td><td class="c">${u && u.n ? u.n + '′' : ''}</td></tr>`;
   }).join('');
   const zoznam = [...material.entries()].sort((a, b) => a[1] - b[1])
-    .map(([vec, d]) => `<li><span class="box"></span>${esc(vec)} <em>do ${kratkyDatum(d)}</em></li>`).join('');
+    .map(([vec, d]) => `<li><span class="box"></span>${esc(vec)} <em>${t.do} ${kratkyDatum(d)}</em></li>`).join('');
   return `<section class="sheet parent${dni.length > 20 ? ' dense' : ''}">
-    <h2>Adventný plán${dieta.meno ? ' – ' + esc(dieta.meno) : ''}</h2>
-    <p class="sub">Prehľad pre rodiča · víkendy sú podfarbené · ′ = minúty</p>
-    <table><thead><tr><th>č.</th><th>dátum</th><th>úloha</th><th>čas</th></tr></thead><tbody>${riadky}</tbody></table>
-    ${zoznam ? `<h3>Čo treba pripraviť</h3><ul class="shop">${zoznam}</ul>` : ''}
+    <h2>${t.plan}${dieta.meno ? ' – ' + esc(dieta.meno) : ''}</h2>
+    <p class="sub">${t.planSub}</p>
+    <table><thead><tr>${t.thead.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${riadky}</tbody></table>
+    ${zoznam ? `<h3>${t.coPripravit}</h3><ul class="shop">${zoznam}</ul>` : ''}
   </section>`;
 }
 
@@ -381,16 +386,16 @@ function vykresliStatistiku(n) {
     }
     const spolu = sada.dni.length || 1;
     const pruh = Object.entries(pocty).sort((a, b) => b[1] - a[1]).map(([c, p]) => {
-      const kk = c === 'vlastne' ? VLASTNA : KATEGORIE[c] || { nazov: c, farba: '#999' };
-      return `<span style="flex:${p};background:${kk.farba}" title="${esc(kk.nazov)}: ${p}"></span>`;
+      const kk = c === 'vlastne' ? VLASTNA : KATEGORIE[c] || { farba: '#999' };
+      return `<span style="flex:${p};background:${kk.farba}" title="${esc(nazovKat(c))}: ${p}"></span>`;
     }).join('');
     const legenda = Object.entries(pocty).sort((a, b) => b[1] - a[1]).map(([c, p]) => {
-      const kk = c === 'vlastne' ? VLASTNA : KATEGORIE[c] || { nazov: c, farba: '#999' };
-      return `<span class="lg"><i style="background:${kk.farba}"></i>${esc(kk.nazov)} ${p}</span>`;
+      const kk = c === 'vlastne' ? VLASTNA : KATEGORIE[c] || { farba: '#999' };
+      return `<span class="lg"><i style="background:${kk.farba}"></i>${esc(nazovKat(c))} ${p}</span>`;
     }).join('');
-    const meno = n.spolocne ? 'Spoločná sada' : (sada.dieta.meno || 'Sada');
+    const meno = n.spolocne ? T().spolocnaSada : (sada.dieta.meno || T().sada);
     return `<div class="stat-row"><div class="stat-head"><b>${esc(meno)}</b>
-      <span>spolu asi ${Math.round(minuty / 60)} h · vonku ${vonku}× · s dospelým ${dospely}× · ${Math.round(minuty / spolu)} min denne</span></div>
+      <span>${T().statRiadok(Math.round(minuty / 60), vonku, dospely, Math.round(minuty / spolu))}</span></div>
       <div class="bar">${pruh}</div><div class="legend">${legenda}</div></div>`;
   });
   $('#stats').innerHTML = riadky.join('');
@@ -408,11 +413,10 @@ function titulka(sada, n) {
     ${ozdoby}
     <div class="cover-in">
       <p class="cover-kicker">${kratkyDatum(prvy)} – ${kratkyDatum(posledny)} ${posledny.getFullYear()}</p>
-      <h2 class="cover-title">Adventný kalendár</h2>
+      <h2 class="cover-title">${T().kalendarTitul}</h2>
       ${dieta.meno && !n.spolocne ? `<p class="cover-name">${esc(dieta.meno)}</p>` : ''}
       <div class="cover-art">${kresba('veniec', n.tlac)}</div>
-      <p class="cover-text">Každý deň otvor jedno okienko a splň úlohu, ktorá sa v ňom skrýva.
-        Spolu ich je ${dni.length}${n.poklad ? ' a na konci ťa čaká poklad' : ''}.</p>
+      <p class="cover-text">${T().titulText(dni.length, n.poklad)}</p>
       ${n.podpis ? `<p class="cover-sign">${esc(n.podpis)}</p>` : ''}
     </div>
   </section>`;
@@ -420,31 +424,22 @@ function titulka(sada, n) {
 
 /* Rady k tlači podľa aktuálnych nastavení */
 function vykresliTipy(n) {
-  const tipy = [
-    'V okne tlače zvoľ papier <b>A4</b> a mierku <b>100 %</b> (nie „prispôsobiť“).',
-    'Vypni <b>hlavičky a päty</b>, aby sa na hárku neobjavila adresa stránky.',
-    n.tlac === 'cb'
-      ? 'Pri čiernobielej tlačiarni nastav <b>odtiene sivej</b> – obrázky sú obrysy na vyfarbenie.'
-      : 'Zapni <b>grafiku pozadia</b> (Chrome: Ďalšie nastavenia → Grafika na pozadí), inak zmiznú farebné plochy.',
-    n.tlac === 'farba' && n.farby !== 'setrne' ? 'Ak dochádza atrament, prepni na <b>Šetriť atrament</b>.' : '',
-    n.zadne ? 'Zadné strany: obojstranná tlač s <b>otáčaním cez dlhú hranu</b>. Najprv vyskúšaj jeden hárok.' : '',
-    n.naStranu >= 8 ? 'Pri malých kartičkách použi hrubší papier (160 g), lepšie sa strihajú.' : 'Na kartičky stačí bežný papier, hrubší (120–160 g) vydrží viac.',
-    'Ak nevieš, aké okraje tlačiareň zvládne, vytlač najprv <b>skúšobnú stranu</b>.',
-  ].filter(Boolean);
+  const tipy = T().tipy(n).filter(Boolean);
   $('#tipy').innerHTML = tipy.map(t => `<li>${t}</li>`).join('');
 }
 
 function skusobnaStrana() {
   const farby = ['#d2463a', '#f2b93b', '#3f8a4b', '#4f8fc9', '#8a62b2', '#1a1a1a'];
   const sive = [10, 25, 40, 60, 80, 100];
+  const t = T().test;
   return `<section class="sheet test">
-    <div class="test-frame"><span>Ak vidíš celý tento rámik (5 mm od okraja), kartičky sa vytlačia celé.</span></div>
-    <h2>Skúšobná strana</h2>
-    <p>Pravítko musí mať presne 10 cm. Ak je kratšie, v okne tlače nastav mierku 100 %.</p>
+    <div class="test-frame"><span>${t.ramik}</span></div>
+    <h2>${t.nadpis}</h2>
+    <p>${t.pravitko}</p>
     <div class="ruler">${Array.from({ length: 11 }, (_, j) => `<span style="left:${j * 10}%"><i></i>${j}</span>`).join('')}</div>
-    <h3>Farby</h3><div class="patches">${farby.map(f => `<span style="background:${f}"></span>`).join('')}</div>
-    <h3>Odtiene sivej</h3><div class="patches">${sive.map(g => `<span style="background:hsl(0 0% ${100 - g}%)"><b>${g} %</b></span>`).join('')}</div>
-    <p class="small">Ak sú farebné políčka vyblednuté alebo pruhované, vyčisti trysky alebo zvoľ čiernobielu tlač – kartičky sa vytlačia ako omaľovánky.</p>
+    <h3>${t.farby}</h3><div class="patches">${farby.map(f => `<span style="background:${f}"></span>`).join('')}</div>
+    <h3>${t.sive}</h3><div class="patches">${sive.map(g => `<span style="background:hsl(0 0% ${100 - g}%)"><b>${g} %</b></span>`).join('')}</div>
+    <p class="small">${t.pozn}</p>
   </section>`;
 }
 
@@ -466,8 +461,8 @@ function importuj(subor) {
       vyplnFormular(data.form || {});
       stav = { seed: novySeed(), vymeny: {}, upravy: {}, zamky: {}, ...(data.stav || {}) };
       generuj();
-      oznam('Záloha je načítaná.');
-    } catch (e) { oznam('Tento súbor sa nedá načítať – vyber súbor .json uložený z tejto stránky.'); }
+      oznam(T().zalohaOk);
+    } catch (e) { oznam(T().zalohaChyba); }
   };
   r.readAsText(subor);
 }
@@ -477,8 +472,16 @@ function oznam(text) {
   clearTimeout(oznam.t); oznam.t = setTimeout(() => { el.hidden = true; }, 3500);
 }
 
+function nastavJazyk(j) {
+  JAZYK = j;
+  prelozStranku();
+  document.querySelectorAll('[data-kat-nazov]').forEach(el => { el.textContent = nazovKat(el.dataset.katNazov); });
+  vykresliDeti(citajDeti());
+}
+
 function generuj() {
   const n = nastavenia();
+  if (n.jazyk !== JAZYK) nastavJazyk(n.jazyk);
   document.body.classList.toggle('tlac-cb', n.tlac === 'cb');
   document.body.classList.toggle('podpis-vlastny', n.podpisVlastny);
   document.body.classList.toggle('viac-deti', n.deti.length > 1);
@@ -514,10 +517,11 @@ function generuj() {
   const kod = stav.seed.toString(36).toUpperCase();
   vykresliTipy(n);
   const pocetKariet = n.vyber ? sady.reduce((s, x) => s + x.dni.filter(d => n.vyber.has(d.cislo)).length, 0) : sady.reduce((s, x) => s + x.dni.length, 0);
-  $('#info').innerHTML = (n.vyber ? '<b>Len vybrané kartičky</b> · ' : '') + `${pocetKariet} kartičiek · ${strany} ${strany === 1 ? 'strana' : strany < 5 ? 'strany' : 'strán'} A4`
-    + ` · kód sady <b class="code">${kod}</b>`
-    + ` · <span class="hint">Kliknutím na text ho upravíš.</span>`
-    + (upravene ? ` · <button type="button" class="link" id="zrusUpravy">Zrušiť moje úpravy (${upravene})</button>` : '');
+  const t = T();
+  $('#info').innerHTML = (n.vyber ? `<b>${t.lenVybrane}</b> · ` : '') + t.info(pocetKariet, strany)
+    + ` · ${t.kodSady} <b class="code">${kod}</b>`
+    + ` · <span class="hint">${t.hint}</span>`
+    + (upravene ? ` · <button type="button" class="link" id="zrusUpravy">${t.zrus(upravene)}</button>` : '');
   prisposobZoom();
   uloz();
 }
@@ -533,7 +537,9 @@ function init() {
   const f = $('#form');
   f.zaciatok.value = `${new Date().getFullYear()}-12-01`;
   $('#kategorie').innerHTML = Object.entries(KATEGORIE).map(([k, v]) =>
-    `<label class="chip"><input type="checkbox" name="kat" value="${k}" checked><span class="dot" style="background:${v.farba}"></span>${v.nazov}</label>`).join('');
+    `<label class="chip"><input type="checkbox" name="kat" value="${k}" checked><span class="dot" style="background:${v.farba}"></span><span data-kat-nazov="${k}">${v.nazov}</span></label>`).join('');
+  // jazyk: uložený, inak podľa prehliadača
+  $(`#jazyk-${/^(sk|cs)/i.test(navigator.language || '') ? 'sk' : 'en'}`).checked = true;
   vykresliDeti([{ meno: '', vek: 's', pohlavie: 'n' }]);
 
   const ulozene = nacitaj();
@@ -545,6 +551,8 @@ function init() {
   }
 
   f.addEventListener('change', generuj);
+  // prepínač jazyka je v hlavičke mimo formulára, zmena k formuláru nedobublá
+  document.querySelectorAll('input[name=jazyk]').forEach(el => el.addEventListener('change', generuj));
   f.addEventListener('input', e => { if (e.target.matches('input[type=text], input[type=number], textarea') && e.target.id !== 'kodVstup') generuj(); });
   $('#pridajDieta').addEventListener('click', () => {
     const deti = citajDeti();
@@ -573,7 +581,7 @@ function init() {
   });
   $('#nacitajKod').addEventListener('click', () => {
     const s = parseInt($('#kodVstup').value.trim(), 36);
-    if (!Number.isFinite(s)) { $('#kodVstup').setCustomValidity('Kód obsahuje len písmená a číslice.'); $('#kodVstup').reportValidity(); return; }
+    if (!Number.isFinite(s)) { $('#kodVstup').setCustomValidity(T().kodChyba); $('#kodVstup').reportValidity(); return; }
     $('#kodVstup').setCustomValidity('');
     stav = { seed: s, vymeny: {}, upravy: {}, zamky: {} }; generuj();
   });
@@ -648,7 +656,7 @@ function init() {
     if (+c.dataset.k !== k || a === b) return generuj();
     const sada = sady[k];
     const ua = sada.dni[a].uloha, ub = sada.dni[b].uloha;
-    if (!pohyblive(ub)) { oznam('Na tento deň patrí sviatok, ten sa presunúť nedá.'); return generuj(); }
+    if (!pohyblive(ub)) { oznam(T().sviatokPresun); return generuj(); }
     stav.vymeny[`${sada.kluc}:${a}`] = ub.id;
     stav.vymeny[`${sada.kluc}:${b}`] = ua.id;
     const ka = `${k}:${a}`, kb = `${k}:${b}`;

@@ -6,6 +6,7 @@ dobrý skutok, tvorenie, pečenie, výlet, tradícia, pesnička alebo hra.
 **Vyskúšaj:** https://veronika-408.github.io/adventne-karticky/
 
 ## Čo vie
+- slovenčina aj angličtina (prepínač SK / EN vpravo hore)
 - úlohy podľa veku (3–5, 6–8, 9–12), správne tvary pre dievča aj chlapca, viac detí naraz
 - sviatky na správny deň (Barborka, Mikuláš, Lucia, Štedrý deň) a vypočítané adventné nedele
 - výlety a dlhé aktivity cez víkend, krátke úlohy v pracovné dni
@@ -20,5 +21,7 @@ Stiahni repozitár a otvor `index.html` v prehliadači. Nič netreba inštalova�
 ## Súbory
 - `index.html`, `style.css`, `app.js` – stránka
 - `data.js` – zoznam úloh, hádaniek a výziev (dá sa ľahko dopĺňať)
+- `data-en.js` – anglické texty úloh v rovnakom poradí ako v `data.js`
+- `i18n.js` – preklady ovládania a textov na kartičkách
 - `art.js` – ilustrácie ako SVG
 - `NAVRH.md`, `ITERACIE.md` – návrh a postup vývoja, staršie verzie sú v `verzie/`
